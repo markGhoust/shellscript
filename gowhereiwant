@@ -1,0 +1,37 @@
+#!/bin/bash
+. colorecho
+function cw(){
+    cd ~/work/$1
+}
+
+function ct(){
+    cd ~/temp/$1
+}
+
+function cs(){
+    cd ~/su/$1
+}
+
+root=""
+
+function setroot(){
+    if [ $# -eq 0 ];then
+        echogreen "set root directory to `pwd`"
+        root=`pwd`
+        return
+    fi
+    if [ $# -eq 1 -a -d $1 ];then
+        echogreen "set root directory to $1"
+        root=$1
+    fi
+}
+
+function cr(){
+    if [ "X${root}" == "X" ]
+    then
+        echored "root not set"
+        echored "    use \"setroot dirroot\" to set root directory"
+        return
+    fi
+    cd ${root}
+}

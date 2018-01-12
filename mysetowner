@@ -1,0 +1,21 @@
+#!/bin/sh
+device=$1
+echo "waiting for device"
+adb wait-for-device 2>/dev/null
+if [ "X${device}" != "X" ];then
+adb -s ${device} shell dpm set-device-owner \'com.android.cts.verifier/com.android.cts.verifier.managedprovisioning.DeviceAdminTestReceiver\' 2>/dev/null
+if [ $? != 0 ];then 
+    echo "fail"
+	exit 1
+else
+    echo "Success"
+fi
+else
+adb shell dpm set-device-owner \'com.android.cts.verifier/com.android.cts.verifier.managedprovisioning.DeviceAdminTestReceiver\' 2>/dev/null
+if [ $? != 0 ];then 
+    echo "fail"
+	exit 1
+else
+    echo "Success"
+fi
+fi

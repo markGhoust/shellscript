@@ -1,0 +1,13 @@
+#!/bin/bash
+function echored(){
+    echo -e "\033[31m$1\033[0m"
+}
+function echogreen(){
+    echo -e "\033[32m$1\033[0m"
+}
+function echoblue(){
+    echo -e "\033[34m$1\033[0m"
+}
+function echopurple(){
+    echo -e "\033[35m$1\033[0m"
+}

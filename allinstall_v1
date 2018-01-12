@@ -1,0 +1,38 @@
+#!/bin/bash
+DEVICE=$2
+APKDIR=$1
+NOT_INSTALL=~/myfactory/not_install.txt
+apkName=$(find ${APKDIR} -name "*.apk")
+findnum=0
+total=0
+
+echo "waiting for device"
+adb wait-for-device
+echo "" > $NOT_INSTALL
+for apk in ${apkName}
+do
+echo ${apk}
+findnum=$[${findnum}+1];
+echo "正在安装第${findnum}个apk"
+if [ "X${DEVICE}" != "X" ] ;then
+    echo "starting install with special device"
+    adb -s "${DEVICE}" install -r ${apk} 2>>$NOT_INSTALL
+    if [ $? -eq 0 ];then
+	    total=$[${total}+1]
+	else
+	    echo "apk:${apk}">>$NOT_INSTALL
+	fi
+	echo "已成功安装${total}个应用"
+else
+    echo "starting install without special device"
+    adb install -r ${apk} 2>>$NOT_INSTALL
+	if [ $? -eq 0 ];then
+	    total=$[${total}+1]
+	else
+	    echo "apk:${apk}">>$NOT_INSTALL
+	fi
+	echo "已成功安装${total}个应用"
+fi
+done
+echo "total success install apk: ${total}"
+sed -i '/Success/d' $NOT_INSTALL

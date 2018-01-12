@@ -1,0 +1,6 @@
+#!/bin/bash
+clear
+echo 'myandroid$ sudo rm -rf /×'
+echo '^C'
+echo 'myandroid$ sudo rm -rf /* -j8'
+read >a

@@ -1,0 +1,9 @@
+#!/bin/sh
+echo "waiting for device"
+adb wait-for-device
+COMPONENT=`adb shell dumpsys window |grep mCurrentFocu |awk '{print $3}'`
+COMPONENT=${COMPONENT%\}}
+echo "current window: ${COMPONENT}"
+
+PKG=${COMPONENT%/*}
+echo " apk: `adb shell pm -p ${PKG}|awk 'BEGIN {FS=":"} {print $2}' `"

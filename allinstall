@@ -1,0 +1,69 @@
+#!/bin/bash
+. colorecho
+function print_usage(){
+	if [ $1 -eq 1 ] ;then
+	    echored "more than one device please use -s device serial" 
+		exit 1
+	else
+		echored "usage:" 
+		echored "      allinstall [-s serial] path" 
+		exit 1
+	fi
+}
+
+function installapk(){
+    echopurple "starting install $findnum apk which named `basename $1`"
+	echo  "$findnum `basename $1` :" >>$PACKAGES
+	aapt d permissions $1 | grep package | awk '{print $2}' >> $PACKAGES
+	echo "package name is `tail -n 1 $PACKAGES`"
+    adb $DEVICE install -r -d $1 2>>$NOT_INSTALL
+    if [ $? -eq 0 ];then
+	    total=$[${total}+1]
+	else
+	    echo "${findnum}apk:$1">>$NOT_INSTALL
+	fi
+	echo "have installed ${total} apk...."
+	echo ""
+}
+
+if [ $# -eq 3 ];then
+    if [ $1 == '-s' ];then
+	    DEVICE="-s $2"
+		APKDIR=$3
+	else
+	    DEVICE="-s $3"
+		APKDIR=$1
+	fi
+else 
+    if [ $# == 1 ];then
+	    APKDIR=$1
+		DEVICE=""
+	else
+	    print_usage 2
+	fi
+fi
+
+NOT_INSTALL=~/temp/not_install.txt
+PACKAGES=~/temp/package.txt
+apkName=$(find ${APKDIR} -name "*.apk")
+findnum=0
+total=0
+
+
+echo "waiting for device"
+adb $DEVICE wait-for-device 2>/dev/null
+if [ $? -ne 0 ];then 
+   print_usage 1
+fi
+if [ ! -d `dirname $NOT_INSTALL` ];then
+    sudo mkdir -p `dirname $NOT_INSTALL`
+fi
+echo -n "" > $NOT_INSTALL 
+    
+for apk in ${apkName}
+do
+    findnum=$[${findnum}+1];
+    installapk $apk
+done
+echogreen "total success install apk: ${total}"
+sed -i '/Success/d' $NOT_INSTALL

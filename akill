@@ -1,0 +1,26 @@
+#!/bin/bash
+
+function usage()
+{
+    echo ""
+    echo " type the process name you want to kill"
+    echo " eg: "
+    echo "       akill launcher"
+    echo " Launcher will be killed"
+    echo ""
+}
+
+if [ "X$1" = "X" ]; then
+    usage;exit 1
+fi
+
+adb wait-for-device
+adb root
+adb wait-for-device
+msg=`adb shell ps |grep -i $1`
+process=`echo ${msg} |awk '{print $9}'`
+pid=`echo ${msg} |awk '{print $2}'`
+
+echo " kill ${process}"
+
+adb shell kill ${pid}

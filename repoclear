@@ -1,0 +1,4 @@
+#!/bin/bash
+repo sync -d -j8 --no-tags -c
+repo forall -c 'git reset --hard'
+repo forall -c 'git clean -f -d'
