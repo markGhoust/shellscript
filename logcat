@@ -5,16 +5,25 @@ function printUsage(){
     echo "          logcat [logcatfilename]"
     exit 1
 }
-echo $#
-echo `[ $# -eq 0 ]`
-if [ $# -eq 1 ];then
-    adb logcat -c
-    adb logcat | tee $1
-elif [ $# -eq 0 ];then
-     adb logcat -c 
-     adb logcat | tee ~/temp/Logcat.txt
-else
-     printUsage
-fi
+function startlog(){
+    adb $1 wait-for-device
+    adb $1 logcat -c
+    adb $1 logcat | tee $logfile
+}
 
+logfile=~/temp/logcat.txt
+arg=""
 
+while [ $# > 0 ] 
+do
+    case $1 in
+        "-s")
+            arg="-s #2"
+            break
+            ;;
+        *)
+            shift
+            ;;
+    esac
+done
+startlog $arg

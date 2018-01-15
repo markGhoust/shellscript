@@ -13,25 +13,40 @@ function cs(){
 }
 
 root=""
-
-function setroot(){
-    if [ $# -eq 0 ];then
-        echogreen "set root directory to `pwd`"
+tag=""
+function setdir(){
+    if [ $# -eq 1 ];then
+        echogreen "set $1 directory to `pwd`"
         root=`pwd`
         return
     fi
-    if [ $# -eq 1 -a -d $1 ];then
-        echogreen "set root directory to $1"
-        root=$1
+    if [ $# -eq 2 -a -d $2 ];then
+        echogreen "set $1 directory to $2"
+        root=$2
     fi
+}
+function settag(){
+    setdir tag $1
+}
+
+function setroot(){
+    setdir root $1
+}
+
+function cdir(){
+    if [ "X$2" == "X" ]
+    then
+        echored "$1 not set"
+        echored "    use \"set$1 [directory]\" to set $1 directory"
+        return
+    fi
+    cd $2
 }
 
 function cr(){
-    if [ "X${root}" == "X" ]
-    then
-        echored "root not set"
-        echored "    use \"setroot dirroot\" to set root directory"
-        return
-    fi
-    cd ${root}
+    cdir root $root
+}
+
+function ca(){
+    cdir tag $tag
 }
