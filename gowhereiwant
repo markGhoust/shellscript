@@ -14,15 +14,27 @@ function cs(){
 
 root=""
 tag=""
+function setd(){
+    case $1 in
+        "tag")
+            tag=$2
+            ;;
+        "root")
+            root=$2
+            ;;
+        *)
+            echored "FAIL"
+    esac
+}
 function setdir(){
     if [ $# -eq 1 ];then
         echogreen "set $1 directory to `pwd`"
-        root=`pwd`
+        setd $1 `pwd`
         return
     fi
     if [ $# -eq 2 -a -d $2 ];then
         echogreen "set $1 directory to $2"
-        root=$2
+        setd $1 $2
     fi
 }
 function settag(){

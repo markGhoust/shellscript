@@ -1,0 +1,21 @@
+#!/bin/sh
+. colorecho
+if [ $# -eq 3 ];then
+    sourcefile=$2
+    targetfile=$3
+else
+    sourcefile=$1
+    targetfile=$2
+fi
+echoblue "wati-for-device"
+adb wait-for-device
+echoblue "adb root"
+adb root
+echoblue "adb remount"
+adb remount
+echoblue "adb push ${sourcefile} ${targetfile}"
+adb push ${sourcefile} ${targetfile}
+if [ $# -eq 3 ];then
+    echoblue "adb reboot"
+    adb reboot
+fi

@@ -1,29 +1,38 @@
 #!/bin/bash
-
-function printUsage(){
-    echo "    usage:    "
-    echo "          logcat [logcatfilename]"
-    exit 1
-}
+. colorecho
 function startlog(){
-    adb $1 wait-for-device
+    if [ ! -d `dirname $logfile` ];then
+	    mkdir -p `dirname $logfile`
+	fi
+    adb $1 wait-for-device 2>/dev/null
+    if [ $? -eq 0 ];then
     adb $1 logcat -c
     adb $1 logcat | tee $logfile
+    else
+        devices=`adb devices | grep -v List | wc -l`
+        ((devices=$devices-1))
+        echored "    ${devices} devices connected"
+        echoblue "` adb devices | grep -v List | cut -f 1 | tr -s "\n"`"
+        echopurple "        Please use \"-s\" special devices"
+    fi
 }
 
-logfile=~/temp/logcat.txt
+today=`date +%m%d`
+logfile=~/temp/${today}/logcat.txt
 arg=""
 
-while [ $# > 0 ] 
+while [ $# -gt 0 ]
 do
     case $1 in
         "-s")
-            arg="-s #2"
-            break
+            arg="-s $2"
+			shift 
+			shift
             ;;
         *)
+            logfile=~/temp/${today}/$1
             shift
             ;;
     esac
 done
-startlog $arg
+startlog "$arg"
