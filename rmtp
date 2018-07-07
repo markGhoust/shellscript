@@ -1,12 +1,27 @@
 #!/bin/sh
 . colorecho
-if [ $# -eq 3 ];then
-    sourcefile=$2
-    targetfile=$3
-else
-    sourcefile=$1
-    targetfile=$2
-fi
+#if [ $# -eq 3 ];then
+#    sourcefile=$2
+#    targetfile=$3
+#else
+#    sourcefile=$1
+#    targetfile=$2
+#fi
+reboot=0
+while [ $# -gt 0 ]
+do
+    case $1 in 
+    "-r")
+        reboot=1
+        shift
+        ;;
+    *)
+        sourcefile=$1
+        shift
+        ;;
+esac
+done
+targetfile=`echo ${sourcefile} | sed 's/^out\/target\/product\/[0-9A-Za-z]*//g'`
 echoblue "wati-for-device"
 adb wait-for-device
 echoblue "adb root"
@@ -15,7 +30,7 @@ echoblue "adb remount"
 adb remount
 echoblue "adb push ${sourcefile} ${targetfile}"
 adb push ${sourcefile} ${targetfile}
-if [ $# -eq 3 ];then
+if [ ${reboot} -eq 1 ];then
     echoblue "adb reboot"
     adb reboot
 fi
